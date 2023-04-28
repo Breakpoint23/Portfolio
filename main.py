@@ -27,18 +27,26 @@ st.sidebar.download_button('Want A Traditional Resume? Click here to download',p
 with st.container():
     left,right=st.columns(2,gap='large')
     with left:
-        st.image(Image.open(r'images/Profile.jpg'),width=600)
+        st.image(Image.open(r'images/Profile.jpg'),width=300)
     with right:
         st.title('Meet Mevada')
-        st.markdown('### Data Scientist | Machine Learning Engineer | Deep Learning Engineer')
+        st.markdown('### Robotics Engineer | Deep Learning Engineer | Software Developer')
     
         st.markdown('**A keen learner with publication in the field of deep learning with proven abilities in software development, control systems , Robotics and Automation while being proficient in Python, SQL, C++ and MATLAB/Simulink.**')
 
 st.markdown('---')
 
-timeline(events,height=600)
 with st.container():
-    st.markdown('## Masters Thesis - Assistance In Natural Setting Using Deep Learning')
+    left,right=st.columns(2)
+    with left:
+        st.header('Current work')
+        st.markdown('## Masters Thesis - Assistance In Natural Setting Using Deep Learning')
+        st.video(speed_url)
+    with right:
+
+        timeline(events,height=600)
+    
+with st.container():
 
      
 

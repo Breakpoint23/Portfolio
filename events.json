@@ -1,8 +1,9 @@
 {
 "title":{
     "text":{
-        "headline":"<b> Career Timeline </b>"
-
+        "headline":"<b> Career Timeline </b>",
+        "text":"<b> During my short career I've designed a mass spring manufacturing machine to a software that can detect an activity a person is doing and estimate the walking speed in realtime to control an exoskeleton.</b><p>To achieve this diverse portfolio learned and appllied various skills and technologies, some of which are listed below,<ol type=1> <li> Programming Languages : <b>Python</b> | C++ | MATLAB | Simulink | SQL </li></ol></p>"
+    
     }
 
 },
