@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const textInput = document.getElementById('textInput');
   const log = document.getElementById('log');
   const clearButton = document.getElementById('clearButton');
-  const submitButton = document.getElementById('submitButton');
 
   let keyLog = [];
   let activeKeys = {};
@@ -33,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         liftTime: event.timeStamp
       });
       lastUpKeyData = null;
+        console.log("keyup",event.key);
     }
     updateLog();
   });
@@ -42,30 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     activeKeys = {};
     lastUpKeyData = null;
     updateLog();
-  });
-
-  submitButton.addEventListener('click', () => {
-    const jsonData = JSON.stringify(keyLog);
-    // Assume 'url' is the API endpoint
-    fetch('localhost:5000/data', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: jsonData
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('API response:', data);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
   });
 
   function updateLog() {

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Key Press Recorder</title>
+  <style>
+    #log {
+      margin-top: 20px;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #333;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #textInput {
+      width: 100%;
+      height: 200px;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #444;
+      color: #fff;
+      border: 1px solid #777;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #log {
+      margin-top: 20px;
+      background-color: #555;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    #log h2 {
+      margin-top: 0;
+    }
+
+    #log div {
+      margin-bottom: 5px;
+    }
+
+    #log div:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Key Press Recorder</h1>
+  <textarea id="textInput" rows="10" cols="50" placeholder="Start typing..."></textarea>
+  <div>
+    <button id="clearButton">Clear Logs</button>
+    <button id="submitButton">Submit</button>
+  </div>
+  <div id="log"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const textInput = document.getElementById('textInput');
+      const clearButton = document.getElementById('clearButton');
+      const submitButton = document.getElementById('submitButton');
+
+      let keyLog = [];
+      let activeKeys = {};
+      let lastUpKeyData = null;
+
+      textInput.addEventListener('keydown', (event) => {
+        if (!activeKeys[event.key]) {
+          activeKeys[event.key] = {
+            key: event.key,
+            keyCode: event.keyCode,
+            pressTime: event.timeStamp,
+            liftTime: null
+          };
+        }
+      });
+
+      textInput.addEventListener('keyup', (event) => {
+        if (activeKeys[event.key]) {
+          activeKeys[event.key].liftTime = event.timeStamp;
+          keyLog.push(activeKeys[event.key]);
+          lastUpKeyData = activeKeys[event.key];
+          delete activeKeys[event.key];
+        } else {
+          keyLog.push({
+            key: event.key,
+            keyCode: event.keyCode,
+            pressTime: lastUpKeyData ? lastUpKeyData.pressTime : null,
+            liftTime: event.timeStamp
+          });
+          lastUpKeyData = null;
+        }
+        updateLog();
+      });
+
+      clearButton.addEventListener('click', () => {
+        keyLog = [];
+        activeKeys = {};
+        lastUpKeyData = null;
+        updateLog();
+      });
+
+      submitButton.addEventListener('click', () => {
+        const jsonData = JSON.stringify(keyLog);
+        fetch('http://localhost:5000/api/keypress', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: jsonData
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('API response:', data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+
+      function updateLog() {
+        const log = document.getElementById('log');
+        log.innerHTML = '<h2>Key Press Log</h2>';
+        keyLog.forEach(entry => {
+          const logEntry = document.createElement('div');
+          logEntry.textContent = `Key: ${entry.key}, KeyCode: ${entry.keyCode}, Press Time: ${entry.pressTime !== null ? entry.pressTime.toFixed(2) : 'N/A'}, Lift Time: ${entry.liftTime !== null ? entry.liftTime.toFixed(2) : 'N/A'}`;
+          log.appendChild(logEntry);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+
