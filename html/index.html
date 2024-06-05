@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Key Press Recorder</title>
   <style>
-    #log {
-      margin-top: 20px;
-    }
     body {
       font-family: Arial, sans-serif;
       background-color: #333;
@@ -21,8 +18,8 @@
     }
 
     #textInput {
-      width: 100%;
-      height: 200px;
+      width: 60%;
+      height: 100px;
       margin-bottom: 10px;
       padding: 10px;
       font-size: 16px;
@@ -31,8 +28,7 @@
       border: 1px solid #777;
       border-radius: 5px;
     }
-
-    button {
+        button {
       padding: 10px 20px;
       font-size: 16px;
       background-color: #007bff;
@@ -47,40 +43,16 @@
       background-color: #0056b3;
     }
 
-    #log {
-      margin-top: 20px;
-      background-color: #555;
-      padding: 10px;
-      border-radius: 5px;
-    }
-
-    #log h2 {
-      margin-top: 0;
-    }
-
-    #log div {
-      margin-bottom: 5px;
-    }
-
-    #log div:last-child {
-      margin-bottom: 0;
-    }
-  </style>
+      </style>
 </head>
 <body>
   <h1>Key Press Recorder</h1>
   <textarea id="textInput" rows="10" cols="50" placeholder="Start typing..."></textarea>
-  <div>
-    <button id="clearButton">Clear Logs</button>
-    <button id="submitButton">Submit</button>
-  </div>
-  <div id="log"></div>
-
+    <div> <button id="clearTextButton">Clear Text</button></div>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const textInput = document.getElementById('textInput');
       const clearButton = document.getElementById('clearButton');
-      const submitButton = document.getElementById('submitButton');
 
       let keyLog = [];
       let activeKeys = {};
@@ -112,49 +84,46 @@
           });
           lastUpKeyData = null;
         }
-        updateLog();
       });
 
-      clearButton.addEventListener('click', () => {
-        keyLog = [];
-        activeKeys = {};
-        lastUpKeyData = null;
-        updateLog();
+        clearTextButton.addEventListener('click', () => {
+        textInput.value = '';
+
+            keyLog = []; // Clear the logs after submitting
       });
 
-      submitButton.addEventListener('click', () => {
-        const jsonData = JSON.stringify(keyLog);
-        fetch('http://localhost:5000/api/keypress', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: jsonData
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log('API response:', data);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
-      });
-
-      function updateLog() {
-        const log = document.getElementById('log');
-        log.innerHTML = '<h2>Key Press Log</h2>';
-        keyLog.forEach(entry => {
-          const logEntry = document.createElement('div');
-          logEntry.textContent = `Key: ${entry.key}, KeyCode: ${entry.keyCode}, Press Time: ${entry.pressTime !== null ? entry.pressTime.toFixed(2) : 'N/A'}, Lift Time: ${entry.liftTime !== null ? entry.liftTime.toFixed(2) : 'N/A'}`;
-          log.appendChild(logEntry);
-        });
+      function sendLogs() {
+        if (keyLog.length > 0) {
+          const jsonData = JSON.stringify(keyLog);
+          fetch('http://localhost:5000/submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: jsonData
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('API response:', data);
+            console.log('Data sent:', keyLog);
+            keyLog = []; // Clear the logs after submitting
+            updateLog();
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+        }
       }
-    });
+
+      // Send logs every 500 milliseconds
+      setInterval(sendLogs, 500);
+
+          });
   </script>
 </body>
 </html>
