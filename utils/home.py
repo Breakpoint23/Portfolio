@@ -9,22 +9,26 @@ INDEXER = pd.api.indexers.FixedForwardWindowIndexer(window_size=30)
 FLASK_API_URL = "http://localhost:5000/logs"
 
 MODEL_API=model_api()
-def fetch_logs(col,ss):
+def fetch_logs(col1,col2,container,ss):
     response = requests.get(FLASK_API_URL)
     if response.status_code == 200:
         logs = response.json()
         if logs==[]:
             return None
-        st.write("Key Press Logs:")
         df=makeDF(logs)
 
-        with col:
-            st.dataframe(df)
         out=MODEL_API.infer(processData(df))
 
-        dist=getDist(ss.enrolledData,out)
-        with col:
-            st.write(f"## The distance is {dist}")
+        print(out.shape)
+        dist,passFlag=getDist(ss.enrolledData,out)
+        with container:
+            with col2:
+                st.write(f"#### {passFlag}")
+            with col1:
+                st.write(f"#### The distance is {np.round(dist,2)}")
+
+            with st.expander("Recived Raw Data"):
+                    st.dataframe(df)
 
 
     else:
@@ -32,10 +36,47 @@ def fetch_logs(col,ss):
 
 
 def getDist(x1,x2):
+    threshold=3.2
+    moreSampleFlag=True if x1.shape[0]>1 else False
+    output=0
+    passFlag=False
 
-    dist=(x1-x2).pow(2).sum(axis=1).sqrt()
+    if x2.shape[0]>1:
 
-    return dist
+        minValue=float("inf")
+
+        for sample in x2:
+            dist=(x1-sample).pow(2).sum(axis=1).sqrt()
+            if moreSampleFlag:
+                dist=dist.mean().item()
+            else:
+                dist=dist.item()
+
+            if dist<minValue:
+                minValue=dist
+            output+=dist
+        
+        if minValue<threshold:
+            passFlag=True
+
+        output/=x2.shape[0]
+
+    else:
+        dist=(x1-x2).pow(2).sum(axis=1).sqrt()
+        if moreSampleFlag:
+            dist=dist.mean().item()
+        else:
+            dist=dist.item()
+        
+        output+=dist
+
+        if dist<threshold:
+            passFlag=True
+        
+    
+
+
+    return output,"Your Typing matches" if passFlag else "Your Typing does not match"
 
 def makeDF(logs):
     df={"key":[],"pressTime":[],"liftTime":[],"keyCode":[]}
@@ -96,7 +137,6 @@ def enroll(col,ss):
         logs = response.json()
         if logs==[]:
             return None
-        st.write("Key Press Logs:")
         df=makeDF(logs)
 
         ss.enrolledData=MODEL_API.infer(processData(df))

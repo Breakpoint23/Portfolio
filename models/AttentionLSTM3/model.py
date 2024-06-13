@@ -172,7 +172,8 @@ class AttentionLSTM3(nn.Module):
 
 
 
+if __name__=="__main__":
 
-model=AttentionLSTM3(5,30,128)
-x=torch.randn(128,5,30)
-print(model(x).shape)
+    model=AttentionLSTM3(5,30,128)
+    x=torch.randn(128,5,30)
+    print(model(x).shape)

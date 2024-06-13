@@ -4,7 +4,7 @@ import torch
 import numpy as np
 from einops import rearrange
 
-MODELPATH="models/AttentionLSTM3/models_saved/model_2.h5"
+MODELPATH="models/AttentionLSTM3/models_saved/model_4.h5"
 
 
 
@@ -37,7 +37,7 @@ class model_api():
         x=torch.from_numpy(self.normalize(x)).float()
         x=rearrange(x,'b s c -> b c s')
 
-        with torch.no_grad():
+        with torch.inference_mode():
             output=self.model(x)
 
         return output
@@ -46,7 +46,7 @@ class model_api():
     def normalize(self,x):
 
         x=np.array(x)
-        print("$"*100,"\n",x.shape)
+        #print("$"*100,"\n",x.shape)
         for i in range(4):
             mi=-2000
             ma=5000

@@ -7,17 +7,38 @@ st.set_page_config(layout="wide")
 
 ss=st.session_state
 
-st.write("# Meet Mevada")
+st.write("# Typing Pattern Recognition")
+
+st.write(" by Meet Mevada")
+
 
 with open("html/index.html","r") as f:
     htmlComp=f.read()
 
-lCol,rCol=st.columns([2,1])
-with lCol:
-    html(htmlComp,height=350)
+with st.container():
+    html(htmlComp,height=250)
 
-with rCol:
-    if st.button("Get logs"):
-        fetch_logs(rCol,ss)
-    if st.button("enroll"):
-        enroll(rCol,ss)
+
+with st.expander("Instructions"):
+
+    with open("README.md","r") as f:
+        instructions=f.read()
+
+    st.markdown(instructions)
+
+resCont=st.container()
+with resCont:
+
+    st.write("### Results")
+    rCol,lCol=st.columns([1,1])
+
+
+with st.container():
+
+    rCol1,lCol1=st.columns([1,1]) 
+
+    with lCol1:
+        st.button("Identify",on_click=fetch_logs,args=[lCol,rCol,resCont,ss],use_container_width=True)
+    
+    with rCol1:
+        st.button("Enroll",on_click=enroll,args=[rCol,ss],use_container_width=True)

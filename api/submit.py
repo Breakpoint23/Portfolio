@@ -20,6 +20,13 @@ def get_logs():
     key_press_logs = []  # Clear the logs after sending them
     return jsonify(logs), 200
 
+@app.route('/clear_logs',methods=["POST"])
+def clear_logs():
+    global key_press_logs
+    key_press_logs=[]
+
+    return jsonify({"message":"logs cleared"}),200
+
 if __name__ == '__main__':
     app.run(debug=True)
 
