@@ -1,4 +1,12 @@
+#### Installation
+- Requirements are in requirement.txt file.
+
+1. run the **submit.py** file in api directory which runs flask api to get data from java script and send it to pytorch.
+
+2. Run the `streamlit run home.py` command for starting the web app at **localhost:8501**.
+
 #### Key Press Recorder
+
 
 This is a simple key press recorder. It records the key press events and sends them to the server.
 - The clear text button clears all the recording (except Enrolled sample)
