@@ -21,7 +21,7 @@ class model_api():
 
     def load_state_dict(self):
         new_state_dict = {}
-        state_dict=torch.load(self.modelPath)
+        state_dict=torch.load(self.modelPath,map_location=torch.device('cpu'))
         for key, value in state_dict.items():
             if key.startswith('module.'):
                 new_key = key[len('module.'):]  # Remove 'module.' prefix

@@ -6,7 +6,7 @@ import numpy as np
 from utils.model import model_api
 
 INDEXER = pd.api.indexers.FixedForwardWindowIndexer(window_size=30)
-FLASK_API_URL = "http://localhost:5000/logs"
+FLASK_API_URL = "https://y5yxe9sy75.execute-api.us-east-2.amazonaws.com/dev/logs"
 
 MODEL_API=model_api()
 def fetch_logs(col1,col2,container,ss):

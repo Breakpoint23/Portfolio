@@ -51,6 +51,7 @@
   <textarea id="textInput" rows="10" cols="50" placeholder="Start typing..."></textarea>
     <div> <button id="clearTextButton">Clear Text</button></div>
   <script>
+    
     document.addEventListener('DOMContentLoaded', () => {
       const textInput = document.getElementById('textInput');
       const clearButton = document.getElementById('clearButton');
@@ -95,7 +96,7 @@
       });
 
         function clearLogsFromAPI() {
-        fetch('http://localhost:5000/clear_logs', {
+        fetch('https://y5yxe9sy75.execute-api.us-east-2.amazonaws.com/dev/clear_logs', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -117,8 +118,9 @@
 
       function sendLogs() {
         if (keyLog.length > 0) {
+          console.log('Sending logs:');
           const jsonData = JSON.stringify(keyLog);
-          fetch('http://localhost:5000/submit', {
+          fetch('https://y5yxe9sy75.execute-api.us-east-2.amazonaws.com/dev/submit', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
