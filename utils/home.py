@@ -20,7 +20,7 @@ def fetch_logs(col1,col2,container,ss):
         out=MODEL_API.infer(processData(df))
 
         print(out.shape)
-        dist,passFlag=getDist(ss.enrolledData,out)
+        dist,passFlag=getDist(ss.enrolledData,out,ss)
         with container:
             with col2:
                 st.write(f"#### {passFlag}")
@@ -35,8 +35,8 @@ def fetch_logs(col1,col2,container,ss):
         st.error(f"Failed to fetch logs. Status code: {response.status_code}")
 
 
-def getDist(x1,x2):
-    threshold=3.2
+def getDist(x1,x2,ss):
+    threshold=ss.threshold
     moreSampleFlag=True if x1.shape[0]>1 else False
     output=0
     passFlag=False
@@ -149,3 +149,5 @@ def enroll(col,ss):
 
 
 
+def thresholdChange(ss,key):
+    ss.threshold=ss[key]

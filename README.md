@@ -25,3 +25,7 @@ This sends your current typing data to the server and compares it with the enrol
 
 It tells you if your typing pattern matches with the enrolled sample.
 - It also gives back a distance between two samples (Enrolled and Current) which gives an idea of how different the samples are.
+
+#### Settings
+
+You can change the acceptable ditance between the enrolled sample and new sample using the slider.
